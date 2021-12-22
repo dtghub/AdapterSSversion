@@ -1,12 +1,15 @@
+import sys
+sys.path.append('/home/derek/Documents/UoG/GA1/FPSE/AdapterSSversion')
 from os import truncate
-import playingCard
+from src.PlayingCard import PlayingCard
 import random
 import copy
 
 
 class Rummy:
+    playing_card = PlayingCard()
 
-    def initGameState():
+    def initGameState(self):
 
         initGameState = {
             "rulesFilename": "Gamerules.txt",
@@ -25,7 +28,7 @@ class Rummy:
 
 
 
-    def initListOfPlays():
+    def initListOfPlays(self):
         initListOfPlays = {
             "playerHand": [],
             "playsFound": [],
@@ -40,7 +43,7 @@ class Rummy:
 
 
 
-    def askYorN(questionString):
+    def askYorN(self, questionString):
         validResponse = False
         while (not validResponse):
             questionResponse = input(questionString)
@@ -52,14 +55,14 @@ class Rummy:
 
 
 
-    def setupNewDeck():
-        newDeck = playingCard.generateDeck()
-        newDeck = playingCard.shuffleCards(newDeck)
+    def setupNewDeck(self):
+        newDeck = self.playing_card.generate_deck()
+        newDeck = self.playing_card.shuffle_cards(newDeck)
         return(newDeck)
 
 
 
-    def getCardFromDeck(gameState):
+    def getCardFromDeck(self, gameState):
         # have we exhauseted the deck?
         # if so, turn over the stock pile and shuffle
         if (gameState["deck"] == []):
@@ -67,19 +70,19 @@ class Rummy:
             if (lenOfStock == 1):
                 print("Deck is empty. Only the stock card remains!")
                 print("Drawing stock card!")
-                topCard = playingCard.dealACard(gameState["stock"])
+                topCard = self.playing_card.deal_a_card(gameState["stock"])
             else:
                 gameState["deck"] = gameState["stock"][0:lenOfStock - 2]
                 gameState["stock"] = [gameState["stock"][lenOfStock - 1]]
-                playingCard.shuffleCards(gameState["deck"])
-                topCard = playingCard.dealACard(gameState["deck"])
+                self.playing_card.shuffle_cards(gameState["deck"])
+                topCard = self.playing_card.deal_a_card(gameState["deck"])
         else:
-            topCard = playingCard.dealACard(gameState["deck"])
+            topCard = self.playing_card.deal_a_card(gameState["deck"])
         return(topCard)
 
 
 
-    def displayRules(rulesFilename):
+    def displayRules(self, rulesFilename):
         try:
             with open(rulesFilename, "r") as f:
                 emailTemplate = f.read()
@@ -92,7 +95,7 @@ class Rummy:
 
 
 
-    def getNumberFromPlayer(inputText, min = -1, max = -1, defaultValue = -1):
+    def getNumberFromPlayer(self, inputText, min = -1, max = -1, defaultValue = -1):
         isNotValidInput = True
 
         while (isNotValidInput):
@@ -131,20 +134,20 @@ class Rummy:
 
 
 
-    def welcomeThePlayer(rulesFilename):
+    def welcomeThePlayer(self, rulesFilename):
         print("\nWelcome to Rummy!\n\n")
-        if askYorN("Would you like to see the instructions? (y or n): "):
-            print(displayRules(rulesFilename))
+        if self.askYorN("Would you like to see the instructions? (y or n): "):
+            print(self.displayRules(rulesFilename))
 
 
 
-    def askPlayerForPrefs(gameState):
+    def askPlayerForPrefs(self, gameState):
         print("If you want, you can just press enter to accept the default answers (shown in brackets) to the following questions.")
 
-        playerChoice = getNumberFromPlayer("Please enter the target score to win (1000): ", 10, 100000, 1000)
+        playerChoice = self.getNumberFromPlayer("Please enter the target score to win (1000): ", 10, 100000, 1000)
         gameState["scoreToWin"] = playerChoice
 
-        playerChoice = getNumberFromPlayer("Please enter the number of players (4):", 2, 5, 4)
+        playerChoice = self.getNumberFromPlayer("Please enter the number of players (4):", 2, 5, 4)
         gameState["numberOfPlayers"] = playerChoice
         
         return(gameState)
@@ -152,14 +155,14 @@ class Rummy:
 
 
 
-    def getPlayerChoices(gameState):
-        welcomeThePlayer(gameState["rulesFilename"])
-        gameState = askPlayerForPrefs(gameState)
+    def getPlayerChoices(self, gameState):
+        self.welcomeThePlayer(gameState["rulesFilename"])
+        gameState = self.askPlayerForPrefs(gameState)
         return(gameState)
 
 
 
-    def determinePlayingOrder(gameState):
+    def determinePlayingOrder(self, gameState):
         playerNum = random.randint(0, gameState["numberOfPlayers"] - 1)
         print("You are player number " + str(playerNum + 1))
         gameState["playerNumber"] = playerNum
@@ -167,7 +170,7 @@ class Rummy:
 
 
 
-    def initiateEnvironment(gameState):
+    def initiateEnvironment(self, gameState):
         for i in range(gameState["numberOfPlayers"]):
             gameState["plays"].append([])
         return(gameState)
@@ -180,13 +183,13 @@ class Rummy:
 
 
     # consider implementing 2 decks if more than 5 players (7 cards dealt to each)
-    def dealTheHands(gameState):
+    def dealTheHands(self, gameState):
         if (gameState["numberOfPlayers"] < 5):
             cardsPerHand = 10
         else:
             cardsPerHand = 6
-        gameState["hands"] = playingCard.dealCards(gameState["deck"], cardsPerHand, gameState["numberOfPlayers"])
-        playingCard.sortHands(gameState["hands"])
+        gameState["hands"] = self.playing_card.deal_cards(gameState["deck"], cardsPerHand, gameState["numberOfPlayers"])
+        self.playing_card.sort_hands(gameState["hands"])
         return(gameState)
 
 
@@ -196,52 +199,52 @@ class Rummy:
 
 
 
-    def displayStock(gameState):
+    def displayStock(self, gameState):
         topCard = gameState["stock"][len(gameState["stock"]) - 1]
         print("The top card on the stock pile is:", topCard)
 
 
 
-    def initiateTheStock(gameState):
-        gameState["stock"].append(playingCard.dealACard(gameState["deck"]))
-        displayStock(gameState)
+    def initiateTheStock(self, gameState):
+        gameState["stock"].append(self.playing_card.deal_a_card(gameState["deck"]))
+        self.displayStock(gameState)
         return(gameState)
 
 
         
-    def displayComputerPosition(computerHand, gameState):
+    def displayComputerPosition(self, computerHand, gameState):
         print("Player", computerHand + 1, "has", len(gameState["hands"][computerHand]), "cards left in their hand.")
         if (len(gameState["plays"][computerHand]) > 0):
             print("They have played the following:", gameState["plays"][computerHand])
 
 
 
-    def displayPlayerPosition(gameState):
+    def displayPlayerPosition(self, gameState):
         playerHand = gameState["playerNumber"]
         print("You are player", playerHand+1)
         print("You have the following cards in your hand:", gameState["hands"][playerHand])
         if (len(gameState["plays"][playerHand]) > 0):
             print("You have played the following:")
             for plays in gameState["plays"][playerHand]:
-                playingCard.convertNumbersToFaces(plays)
+                self.playing_card.convert_numbers_to_faces(plays)
                 print(plays)
-                playingCard.convertFacesToNumbers(plays)
+                self.playing_card. convert_faces_to_numbers(plays)
         
 
 
 
 
 
-    def displayInitialPosition(gameState):
+    def displayInitialPosition(self, gameState):
         print("Under construction")
 
-        displayStock(gameState)
+        self.displayStock(gameState)
 
         for handToDisplay in range(gameState["numberOfPlayers"]):
             if handToDisplay == gameState["playerNumber"]:
-                displayPlayerPosition(gameState)
+                self.displayPlayerPosition(gameState)
             else:
-                displayComputerPosition(handToDisplay, gameState)
+                self.displayComputerPosition(handToDisplay, gameState)
 
 
 
@@ -249,14 +252,14 @@ class Rummy:
 
 
 
-    def setupNewGame(gameState):
-        gameState["deck"] = setupNewDeck()
-        gameState = getPlayerChoices(gameState)
-        gameState = determinePlayingOrder(gameState)
-        gameState = initiateEnvironment(gameState)
-        gameState = dealTheHands(gameState)
-        gameState = initiateTheStock(gameState)
-        displayInitialPosition(gameState)
+    def setupNewGame(self, gameState):
+        gameState["deck"] = self.setupNewDeck()
+        gameState = self.getPlayerChoices(gameState)
+        gameState = self.determinePlayingOrder(gameState)
+        gameState = self.initiateEnvironment(gameState)
+        gameState = self.dealTheHands(gameState)
+        gameState = self.initiateTheStock(gameState)
+        self.displayInitialPosition(gameState)
         print(gameState)
         return(gameState)
 
@@ -268,8 +271,8 @@ class Rummy:
 
 
     # set up the listOfPlays structure at the start of the evaluation
-    def setupListOfPlays(gameState, currentPlayer):
-        listOfPlays = initListOfPlays()
+    def setupListOfPlays(self, gameState, currentPlayer):
+        listOfPlays = self.initListOfPlays()
         listOfPlays["playsFound"] = copy.deepcopy(gameState["plays"][currentPlayer])
         listOfPlays["playerHand"] = copy.deepcopy(gameState["hands"][currentPlayer])
 
@@ -301,7 +304,7 @@ class Rummy:
 
 
     # check to see if the next x cards are sequential (x = playLength)
-    def checkForRun(startPosition, playLength, playerHand):
+    def checkForRun(self, startPosition, playLength, playerHand):
         isMatch = True
         for i in range(startPosition, startPosition + playLength - 1):
             if (isMatch):
@@ -318,7 +321,7 @@ class Rummy:
 
 
     # find the first x cards with the same face value as the starting card (x = playLength)
-    def checkForSet(startPosition, playLength, playerHand):
+    def checkForSet(self, startPosition, playLength, playerHand):
         cardToMatch = playerHand[startPosition]
         faceValueToMatch = cardToMatch[1:3]
         cardsMatched = 1
@@ -336,14 +339,14 @@ class Rummy:
 
 
     # start with the card in position 0 in the hand, and see if a run or set can be formed from it, then move on to the card in position 1 etc
-    def findSetsOrRuns(listOfPlays, playLength):
+    def findSetsOrRuns(self, listOfPlays, playLength):
         isPlaysFound = False
         for i in range(len(listOfPlays["playerHand"]) - playLength + 1):
-            playsFound = checkForRun(i, playLength, listOfPlays["playerHand"])
+            playsFound = self.checkForRun(i, playLength, listOfPlays["playerHand"])
             if (playsFound != []):
                 listOfPlays["newPlaysFound"].append(playsFound)
                 isPlaysFound = True
-            playsFound = checkForSet(i, playLength, listOfPlays["playerHand"])
+            playsFound = self.checkForSet(i, playLength, listOfPlays["playerHand"])
             if (playsFound != []):
                 listOfPlays["newPlaysFound"].append(playsFound)
                 isPlaysFound = True
@@ -352,7 +355,7 @@ class Rummy:
 
 
     # identify what run and set plays are possible from the current position
-    def generateListOfRunsAndSets(listOfPlays):
+    def generateListOfRunsAndSets(self, listOfPlays):
         numberOfCardsInThePlay = 3
         isPlaysFound = True
         lengthOfTheHand = len(listOfPlays["playerHand"])
@@ -361,7 +364,7 @@ class Rummy:
         # start by identifying plays of 3 cards, then look for 4 etc
         # if there aren't any 4-length plays then there won't be any 5, 6 etc
         while(isPlaysFound and (numberOfCardsInThePlay <= lengthOfTheHand)):
-            listOfPlays, isPlaysFound = findSetsOrRuns(listOfPlays, numberOfCardsInThePlay)
+            listOfPlays, isPlaysFound = self.findSetsOrRuns(listOfPlays, numberOfCardsInThePlay)
             numberOfCardsInThePlay += 1
 
         return(listOfPlays)
@@ -378,7 +381,7 @@ class Rummy:
 
 
     # see if the card can be added to the start or end of a set
-    def checkForMeldSet(handPosition, listOfPlays, setToCheck):
+    def checkForMeldSet(self, handPosition, listOfPlays, setToCheck):
         replacedSet = []
         setToReplace = []
         cardToMeld = []
@@ -406,11 +409,15 @@ class Rummy:
 
 
     # see if the card can be added to the start or end of a run
-    def checkForMeldRun(startPosition, listOfPlays, runToCheck):
+    def checkForMeldRun(self, startPosition, listOfPlays, runToCheck):
 
         replacedRun = []
         runToReplace = []
         cardToMeld = []
+
+        print(runToCheck)
+        # runToCheck = self.playing_card.convert_face_to_number(runToCheck)
+
 
         cardToMatch = listOfPlays["playerHand"][startPosition]
         suitToMatch = cardToMatch[0]
@@ -420,6 +427,7 @@ class Rummy:
         lastCard = len(runToCheck) - 1
 
         if ((runToCheck[firstCard][0] == suitToMatch) and (int(runToCheck[firstCard][1:3]) == int(faceToMatch) + 1)):
+            # runToCheck = self.playing_card.convert_number_to_face(runToCheck)
             newRun = [cardToMatch]
             newRun.extend(runToCheck)
             replacedRun = runToCheck
@@ -427,6 +435,7 @@ class Rummy:
             cardToMeld = cardToMatch
 
         if ((runToCheck[lastCard][0] == suitToMatch) and (int(runToCheck[lastCard][1:3]) == int(faceToMatch)-1)):
+            # runToCheck = self.playing_card.convert_number_to_face(runToCheck)
             newRun = copy.deepcopy(runToCheck)
             newRun.append(cardToMatch)
             replacedRun = runToCheck
@@ -449,25 +458,25 @@ class Rummy:
 
 
 
-    def checkForMelds(handPosition, listOfPlays):
+    def checkForMelds(self, handPosition, listOfPlays):
         meldsFound = []
         for playToCheck in listOfPlays["playsFound"]:
             # is it a set? if not it's a run
             if (playToCheck[0][1:3] == playToCheck[1][1:3]):
-                meldPlay = checkForMeldSet(handPosition, listOfPlays, playToCheck)
+                meldPlay = self.checkForMeldSet(handPosition, listOfPlays, playToCheck)
             else:
-                meldPlay = checkForMeldRun(handPosition, listOfPlays, playToCheck)
+                meldPlay = self.checkForMeldRun(handPosition, listOfPlays, playToCheck)
             if (meldPlay != []):
                 meldsFound.append(meldPlay)
         return(meldsFound)
 
 
 
-    def generateListOfMeldsFound(listOfPlays):
+    def generateListOfMeldsFound(self, listOfPlays):
         # we can only meld cards to plays already made
         if (len(listOfPlays["playsFound"]) > 0):
             for i in range(len(listOfPlays["playerHand"])):
-                playsFound = checkForMelds(i, listOfPlays)
+                playsFound = self.checkForMelds(i, listOfPlays)
                 if (playsFound != [] ):
                     for playFound in playsFound:
                         listOfPlays["newPlaysFound"].append(playFound)
@@ -480,22 +489,22 @@ class Rummy:
 
 
 
-    def findPlaysInHand(listOfPlays):
-        listOfPlays = generateListOfRunsAndSets(listOfPlays)
-        listOfPlays = generateListOfMeldsFound(listOfPlays)
+    def findPlaysInHand(self, listOfPlays):
+        listOfPlays = self.generateListOfRunsAndSets(listOfPlays)
+        listOfPlays = self.generateListOfMeldsFound(listOfPlays)
         return(listOfPlays)
 
 
 
 
-    def calculateScore(listOfPlays):
+    def calculateScore(self, listOfPlays):
         totalScore = 0
         for play in listOfPlays["playsFound"]:
-            playingCard.convertFacesToNumbers(play)
+            self.playing_card.convert_faces_to_numbers(play)
             for card in play:
                 cardValue = int(card[1:3])
                 totalScore += cardValue
-            playingCard.convertNumbersToFaces(play)
+            self.playing_card.convert_numbers_to_faces(play)
         listOfPlays["bestScoreSoFar"] = totalScore
         return(listOfPlays)
 
@@ -503,14 +512,14 @@ class Rummy:
 
 
 
-    def removeCardsFromHand(playerHand, cardsToRemove):
+    def removeCardsFromHand(self, playerHand, cardsToRemove):
         for nextCard in cardsToRemove:
                 playerHand.remove(nextCard)
         return(playerHand)
 
 
 
-    def incorporateTheNewPlay(listOfPlays, playToEvaluate):
+    def incorporateTheNewPlay(self, listOfPlays, playToEvaluate):
 
         # update listOfPlays to record that playToEvaluate has been applied    
         listOfPlays["newPlaysFound"] = []
@@ -519,10 +528,13 @@ class Rummy:
         if (len(playToEvaluate[1][0]) == 1):
             # run or set
             listOfPlays["playsFound"].append(playToEvaluate)
-            listOfPlays["playerHand"] = removeCardsFromHand(listOfPlays["playerHand"], playToEvaluate)  
+            listOfPlays["playerHand"] = self.removeCardsFromHand(listOfPlays["playerHand"], playToEvaluate)  
         else:
             # it's a meld
+            print(playToEvaluate)
             meldedCard = playToEvaluate[0]
+            print(meldedCard)
+            print(meldedCard[0])
             newPlay = playToEvaluate[1]
             originalPlay = playToEvaluate[2]
             listOfPlays["playerHand"].remove(meldedCard[0])
@@ -537,19 +549,19 @@ class Rummy:
 
 
     # called recursively until no more plays found, then calculates score and returns the highest-score-found-so-far as each call returns
-    def findBestScoreForHand(listOfPlays):
+    def findBestScoreForHand(self, listOfPlays):
         bestPlay = copy.deepcopy(listOfPlays)
 
         # identify what if any plays are possible with the hand
-        listOfPlays = findPlaysInHand(listOfPlays)
+        listOfPlays = self.findPlaysInHand(listOfPlays)
 
         # if play(s) have been identified, they need evaluated, so recurse and keep the best score which is returned
         if (listOfPlays["newPlaysFound"] != []):
             for newPlayFound in listOfPlays["newPlaysFound"]:
                 newPlay = copy.deepcopy(listOfPlays)
-                newPlay = incorporateTheNewPlay(newPlay, newPlayFound)
-                newPlay = findBestScoreForHand(newPlay)
-                newPlay = calculateScore(newPlay)
+                newPlay = self.incorporateTheNewPlay(newPlay, newPlayFound)
+                newPlay = self.findBestScoreForHand(newPlay)
+                newPlay = self.calculateScore(newPlay)
                 if (newPlay["bestScoreSoFar"] >= bestPlay["bestScoreSoFar"]):
                     bestPlay = copy.deepcopy(newPlay)
 
@@ -561,41 +573,41 @@ class Rummy:
 
 
     # here we call the evaluate best hand routine, firstly just with the hand and then with the top card on the discard pile - if including the top discard card improves the score we go with that, otherwise we draw a card from the pile and play based on that
-    def decideDiscardOrStockAndThenPlay(gameState, listOfPlays):
+    def decideDiscardOrStockAndThenPlay(self, gameState, listOfPlays):
 
         # what is the best score we can have without drawing a card?
         justHand = copy.deepcopy(listOfPlays)
-        justHand = findBestScoreForHand(justHand)
+        justHand = self.findBestScoreForHand(justHand)
         
 
         # add the top card from the stock and try again
         topCard = gameState["stock"][len(gameState["stock"]) - 1]
-        topCard = playingCard.convertFaceToNumber(topCard)
+        topCard = self.playing_card. convert_face_to_number(topCard)
         withTopCard = copy.deepcopy(listOfPlays)
         withTopCard["playerHand"].append(topCard)
         withTopCard["playerHand"].sort()
-        withTopCard = findBestScoreForHand(withTopCard)
+        withTopCard = self.findBestScoreForHand(withTopCard)
 
 
         if (withTopCard["bestScoreSoFar"] > justHand["bestScoreSoFar"]):
             listOfPlays = withTopCard
-            topCard = playingCard.convertNumberToFace(topCard)
+            topCard = self.playing_card. convert_number_to_face(topCard)
             print("Player draws the", topCard, "from the stock pile.")
             gameState["stock"].pop()
         else:
             # the stock card didn't help, so take the chance with the stock card
-            cardFromDeck = getCardFromDeck(gameState)
-            cardFromDeck = playingCard.convertFaceToNumber(cardFromDeck)
+            cardFromDeck = self.getCardFromDeck(gameState)
+            cardFromDeck = self.playing_card. convert_face_to_number(cardFromDeck)
             print("Player takes a card from the deck.")
             listOfPlays["playerHand"].append(cardFromDeck)
             listOfPlays["playerHand"].sort()
-            listOfPlays = findBestScoreForHand(listOfPlays)
+            listOfPlays = self.findBestScoreForHand(listOfPlays)
 
         return(gameState, listOfPlays)
 
 
 
-    def pickACardToDiscard(gameState, listOfPlays):
+    def pickACardToDiscard(self, gameState, listOfPlays):
         numberOfCardsLeftInHand = len(listOfPlays["playerHand"])
         if (numberOfCardsLeftInHand > 0):
             positionOfCardToDiscard = random.randint(1, numberOfCardsLeftInHand) - 1
@@ -608,21 +620,21 @@ class Rummy:
 
 
 
-    def reportWhatWasPlayed(listOfPlays):
+    def reportWhatWasPlayed(self, listOfPlays):
         for playMade in listOfPlays["playsMadeSoFar"]:
             if (len(playMade[1][0]) == 1):
                 # run or set
                 facesList = copy.deepcopy(playMade)
-                playingCard.convertNumbersToFaces(facesList)
+                self.playing_card.convert_numbers_to_faces(facesList)
                 print("Player played:", facesList)
             else:
                 # it's a meld
                 meldedCard = playMade[0]
-                playingCard.convertNumbersToFaces(meldedCard)
+                self.playing_card.convert_numbers_to_faces(meldedCard)
                 newPlay = playMade[1]
-                playingCard.convertNumbersToFaces(newPlay)
+                self.playing_card.convert_numbers_to_faces(newPlay)
                 originalPlay = playMade[2]
-                playingCard.convertNumbersToFaces(originalPlay)
+                self.playing_card.convert_numbers_to_faces(originalPlay)
                 
                 print(
                     "Player melded the", meldedCard,
@@ -633,28 +645,28 @@ class Rummy:
 
 
 
-    def incorporateThePlaysMade(gameState, listOfPlays, currentPlayer):
+    def incorporateThePlaysMade(self, gameState, listOfPlays, currentPlayer):
         gameState["hands"][currentPlayer] = listOfPlays["playerHand"]
         gameState["plays"][currentPlayer] = listOfPlays["playsFound"]
         return(gameState)
 
 
 
-    def playComputerTurn(gameState, currentPlayer):
+    def playComputerTurn(self, gameState, currentPlayer):
         # currentPlayer = 0 #dummy value for just now
         print("\n\nPlayer number", currentPlayer + 1, "plays.")
 
-        listOfPlays = setupListOfPlays(gameState, currentPlayer)
-        playingCard.convertFacesToNumbers(listOfPlays["playerHand"])
+        listOfPlays = self.setupListOfPlays(gameState, currentPlayer)
+        self.playing_card. convert_faces_to_numbers(listOfPlays["playerHand"])
         listOfPlays["playerHand"].sort()
 
-        gameState, listOfPlays = decideDiscardOrStockAndThenPlay(gameState, listOfPlays)
+        gameState, listOfPlays = self.decideDiscardOrStockAndThenPlay(gameState, listOfPlays)
 
-        playingCard.convertNumbersToFaces(listOfPlays["playerHand"])
+        self.playing_card.convert_numbers_to_faces(listOfPlays["playerHand"])
 
-        gameState, listOfPlays = pickACardToDiscard(gameState, listOfPlays)
-        reportWhatWasPlayed(listOfPlays)
-        gameState = incorporateThePlaysMade(gameState, listOfPlays, currentPlayer)
+        gameState, listOfPlays = self.pickACardToDiscard(gameState, listOfPlays)
+        self.reportWhatWasPlayed(listOfPlays)
+        gameState = self.incorporateThePlaysMade(gameState, listOfPlays, currentPlayer)
         return(gameState)
 
 
@@ -667,20 +679,20 @@ class Rummy:
 
 
 
-    def playerChoiceDeckOrStock(gameState, listOfPlays):
-        isToDrawStockCard = askYorN("Do you want to take the top stock card? (y/n): ")
+    def playerChoiceDeckOrStock(self, gameState, listOfPlays):
+        isToDrawStockCard = self.askYorN("Do you want to take the top stock card? (y/n): ")
         if (isToDrawStockCard):
             cardDrawn = gameState["stock"].pop()
-            cardDrawn = playingCard.convertFaceToNumber(cardDrawn)
+            cardDrawn = self.playing_card. convert_face_to_number(cardDrawn)
         else:
-            cardDrawn = getCardFromDeck(gameState)
+            cardDrawn = self.getCardFromDeck(gameState)
             print("You have drawn", cardDrawn, "from the deck.")
-            cardDrawn = playingCard.convertFaceToNumber(cardDrawn)
+            cardDrawn = self.playing_card. convert_face_to_number(cardDrawn)
             
-        playingCard.convertFacesToNumbers(listOfPlays["playerHand"])
+        self.playing_card. convert_faces_to_numbers(listOfPlays["playerHand"])
         listOfPlays["playerHand"].append(cardDrawn)
         listOfPlays["playerHand"].sort()
-        playingCard.convertNumbersToFaces(listOfPlays["playerHand"])
+        self.playing_card.convert_numbers_to_faces(listOfPlays["playerHand"])
 
         return(listOfPlays)
 
@@ -695,23 +707,23 @@ class Rummy:
 
 
 
-    def listPlaysAndGetPlayerChoice(listOfPlays):
+    def listPlaysAndGetPlayerChoice(self, listOfPlays):
         isKeepGoing = True
         print("Please choose from the following options:")
         playerChoices = listOfPlays["newPlaysFound"]
         for i, playerOption in enumerate(playerChoices):
 
             if (len(playerOption[1][0]) == 1):
-                playingCard.convertNumbersToFaces(playerOption)
+                self.playing_card.convert_numbers_to_faces(playerOption)
                 print(i,")", playerOption)
-                playingCard.convertFacesToNumbers(playerOption)
+                self.playing_card. convert_faces_to_numbers(playerOption)
             else:
                 meldedCard = playerOption[0]
-                playingCard.convertNumbersToFaces(meldedCard)
+                self.playing_card.convert_numbers_to_faces(meldedCard)
                 newPlay = playerOption[1]
-                playingCard.convertNumbersToFaces(newPlay)
+                self.playing_card.convert_numbers_to_faces(newPlay)
                 originalPlay = playerOption[2]
-                playingCard.convertNumbersToFaces(originalPlay)
+                self.playing_card.convert_numbers_to_faces(originalPlay)
                 
                 print(
                     i, ")",
@@ -722,12 +734,12 @@ class Rummy:
 
         print(len(playerChoices), ") No play")
 
-        playNumberChosenByPlayer = getNumberFromPlayer("\nPlease select:", 0, len(playerChoices))
+        playNumberChosenByPlayer = self.getNumberFromPlayer("\nPlease select:", 0, len(playerChoices))
         if (playNumberChosenByPlayer < len(playerChoices)):
             playerChoice = playerChoices[playNumberChosenByPlayer]
-            playingCard.convertFacesToNumbers(listOfPlays["playerHand"])
-            listOfPlays = incorporateTheNewPlay(listOfPlays, playerChoice)
-            playingCard.convertNumbersToFaces(listOfPlays["playerHand"])
+            self.playing_card. convert_faces_to_numbers(listOfPlays["playerHand"])
+            listOfPlays = self.incorporateTheNewPlay(listOfPlays, playerChoice)
+            self.playing_card.convert_numbers_to_faces(listOfPlays["playerHand"])
         else:
             isKeepGoing = False
 
@@ -745,17 +757,17 @@ class Rummy:
 
 
 
-    def getPlayersChoiceOfPlays(listOfPlays):
+    def getPlayersChoiceOfPlays(self, listOfPlays):
         isKeepGoing = True
         while (isKeepGoing):
-            playingCard.convertFacesToNumbers(listOfPlays["playerHand"])
+            self.playing_card. convert_faces_to_numbers(listOfPlays["playerHand"])
             listOfPlays["playerHand"].sort()
-            listOfPlays = findPlaysInHand(listOfPlays)
-            playingCard.convertNumbersToFaces(listOfPlays["playerHand"])
+            listOfPlays = self.findPlaysInHand(listOfPlays)
+            self.playing_card.convert_numbers_to_faces(listOfPlays["playerHand"])
             print("Looking for a play option...")
 
             if (listOfPlays["newPlaysFound"] != []):
-                listOfPlays, isKeepGoing = listPlaysAndGetPlayerChoice(listOfPlays)
+                listOfPlays, isKeepGoing = self.listPlaysAndGetPlayerChoice(listOfPlays)
             else:
                 print("You have no valid plays available")
                 isKeepGoing = False
@@ -764,7 +776,7 @@ class Rummy:
 
 
 
-    def getPlayersChoiceOfCardToReturnToStock(gameState, listOfPlays):
+    def getPlayersChoiceOfCardToReturnToStock(self, gameState, listOfPlays):
         numberOfCardsLeft = len(listOfPlays["playerHand"])
         if (numberOfCardsLeft == 0):
             print("You have played all of your cards")
@@ -777,7 +789,7 @@ class Rummy:
             playerChoices = listOfPlays["playerHand"]
             for i, playerOption in enumerate(playerChoices):
                 print(i,")", playerOption)
-            cardNumberChosenByPlayer = getNumberFromPlayer("\nPlease select:", 0, len(playerChoices))
+            cardNumberChosenByPlayer = self.getNumberFromPlayer("\nPlease select:", 0, len(playerChoices))
             gameState["stock"].append(listOfPlays["playerHand"][cardNumberChosenByPlayer])
             listOfPlays["playerHand"].pop(cardNumberChosenByPlayer)
 
@@ -792,24 +804,22 @@ class Rummy:
 
 
 
-    def playersTurn(gameState):
-        displayPlayerPosition(gameState)
-        displayStock(gameState)
+    def playersTurn(self, gameState):
+        self.displayPlayerPosition(gameState)
+        self.displayStock(gameState)
 
-        listOfPlays = setupListOfPlays(gameState, gameState["playerNumber"])
+        listOfPlays = self.setupListOfPlays(gameState, gameState["playerNumber"])
 
         #insert listofplays convert faces to numbers here
 
-        listOfPlays = playerChoiceDeckOrStock(gameState, listOfPlays)
+        listOfPlays = self.playerChoiceDeckOrStock(gameState, listOfPlays)
 
         
-        listOfPlays = getPlayersChoiceOfPlays(listOfPlays)
+        listOfPlays = self.getPlayersChoiceOfPlays(listOfPlays)
     
-        gameState, listOfPlays = getPlayersChoiceOfCardToReturnToStock(gameState, listOfPlays)
+        gameState, listOfPlays = self.getPlayersChoiceOfCardToReturnToStock(gameState, listOfPlays)
 
-        gameState = incorporateThePlaysMade(gameState, listOfPlays, gameState["playerNumber"])
-
-
+        gameState = self.incorporateThePlaysMade(gameState, listOfPlays, gameState["playerNumber"])
 
 
 
@@ -828,7 +838,9 @@ class Rummy:
 
 
 
-    def hasLastCardBeenPlayed(gameState, currentPlayer):
+
+
+    def hasLastCardBeenPlayed(self, gameState, currentPlayer):
         isGameToContinue = True
         if (len(gameState["hands"][currentPlayer]) == 0):
             isGameToContinue = False
@@ -836,18 +848,18 @@ class Rummy:
 
 
 
-    def playGame(gameState):
+    def playGame(self, gameState):
         isGameInProgress = True
         gameNumber = 1
 
         while (isGameInProgress):
             currentPlayer = (gameNumber - 1) % (gameState["numberOfPlayers"])
             if (currentPlayer == gameState["playerNumber"]):
-                playersTurn(gameState)
+                self.playersTurn(gameState)
             else:
-                playComputerTurn(gameState, currentPlayer)
+                self.playComputerTurn(gameState, currentPlayer)
 
-            isGameInProgress = hasLastCardBeenPlayed(gameState, currentPlayer)
+            isGameInProgress = self.hasLastCardBeenPlayed(gameState, currentPlayer)
 
             gameNumber += 1
         return(gameState)
@@ -867,10 +879,10 @@ class Rummy:
 
 
 
-    def main():
-        gameState = initGameState()
+    def main(self):
+        gameState = self.initGameState()
 
-        gameState = setupNewGame(gameState)
+        gameState = self.setupNewGame(gameState)
 
 
         isGameInProgress = True
@@ -881,13 +893,13 @@ class Rummy:
         # loop and then if playermyber = hand number then do player turn else compuerturn
         while isGameInProgress:
 
-            gameState = playGame(gameState)
+            gameState = self.playGame(gameState)
 
             # currentPlayer = 0
 
-            # gameState = playComputerTurn(gameState, currentPlayer) # currentPlayer logic needs added
+            # gameState = self.playComputerTurn(gameState, currentPlayer) # currentPlayer logic needs added
 
-            # gameState = playersTurn(gameState)
+            # gameState = self.playersTurn(gameState)
             
             # gameState = playComputerHandsSecondStage(gameState)
 

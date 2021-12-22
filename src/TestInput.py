@@ -1,4 +1,4 @@
-from Input import Input
+from src.Input import Input
 
 class TestInput(Input):
 
