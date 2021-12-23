@@ -2,12 +2,18 @@ import sys
 sys.path.append('/home/derek/Documents/UoG/GA1/FPSE/AdapterSSversion')
 from os import truncate
 from src.PlayingCard import PlayingCard
+from src.ConsoleInput import ConsoleInput
 import random
 import copy
 
 
 class Rummy:
     playing_card = PlayingCard()
+    game_input = ConsoleInput()
+
+
+    def set_game_input(self,game_input):
+        self.game_input = game_input
 
     def initGameState(self):
 
@@ -46,7 +52,7 @@ class Rummy:
     def askYorN(self, questionString):
         validResponse = False
         while (not validResponse):
-            questionResponse = input(questionString)
+            questionResponse = self.game_input.get_string(questionString)
             if ((len(questionResponse) == 1) and (questionResponse.lower() in "yn")):
                 validResponse = True
             else:
@@ -102,7 +108,7 @@ class Rummy:
             isAboveMin = True
             isBelowMax = True
 
-            playerChoice = input(inputText)
+            playerChoice = self.game_input.get_string(inputText)
             
             if (defaultValue != -1):
                 if (playerChoice == ""):

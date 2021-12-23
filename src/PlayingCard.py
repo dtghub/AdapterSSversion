@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/home/derek/Documents/UoG/GA1/FPSE/AdapterSSversion')
 import random
 
 class PlayingCard:

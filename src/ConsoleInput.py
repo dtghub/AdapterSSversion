@@ -1,6 +1,8 @@
-from Input import Input
+import sys
+sys.path.append('/home/derek/Documents/UoG/GA1/FPSE/AdapterSSversion')
+from src.Input import Input
 import unittest
 class ConsoleInput(Input):
 
-    def getString(self, message):
+    def get_string(self, message):
         return input(message)

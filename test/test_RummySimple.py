@@ -11,6 +11,7 @@ class TestRummy(unittest.TestCase):
     playing_card = PlayingCard()
     test_input = TestInput()
 
+    # a full deck, unshuffled
     def setUp(self):
         self.deck = []
         for suit in ['H', 'D', 'S', 'C']:
@@ -47,11 +48,16 @@ class TestRummy(unittest.TestCase):
         self.assertEqual(self.deck, self.playing_card.generate_deck())
 
 
-    def test_getNumberFromPlayer(self):
+    # def test_getNumberFromPlayer(self):
+    #     self.test_input.set_list_of_test_inputs(["S"])
+    #     self.rummy.set_game_input(self.test_input)
+
+    def test_askYorN(self):
+        self.test_input.set_list_of_test_inputs(["y"])
+        self.rummy.set_game_input(self.test_input)
+        self.assertTrue(self.rummy.askYorN("Howdy"))
 
 
 
-
-
-# if __name__ == '__main__':
-#     unittest.main()
+if __name__ == '__main__':
+    unittest.main()
