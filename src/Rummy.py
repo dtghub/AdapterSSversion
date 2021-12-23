@@ -3,6 +3,7 @@ sys.path.append('/home/derek/Documents/UoG/GA1/FPSE/AdapterSSversion')
 from os import truncate
 from src.PlayingCard import PlayingCard
 from src.ConsoleInput import ConsoleInput
+from src.ConsoleOutput import ConsoleOutput
 import random
 import copy
 
@@ -10,10 +11,14 @@ import copy
 class Rummy:
     playing_card = PlayingCard()
     game_input = ConsoleInput()
+    game_output = ConsoleOutput()
 
 
-    def set_game_input(self,game_input):
+    def set_game_input(self, game_input):
         self.game_input = game_input
+
+    def set_game_output(self, game_output):
+        self.game_output = game_output
 
     def initGameState(self):
 
@@ -56,7 +61,7 @@ class Rummy:
             if ((len(questionResponse) == 1) and (questionResponse.lower() in "yn")):
                 validResponse = True
             else:
-                print("Please enter 'y' or 'n'")
+                self.game_output.display("Please enter 'y' or 'n'")
         return(questionResponse.lower() == "y")
 
 
