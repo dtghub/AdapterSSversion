@@ -211,12 +211,8 @@ class TestRummy(unittest.TestCase):
     def test_findPlaysInHand_MeldSet(self):
         listOfPlays = {'playerHand': ['C03', 'C04', 'C05', 'D04', 'D08', 'H03', 'H04', 'H08', 'H11', 'S04', 'S08'], 'playsFound': [['D09', 'D10', 'D11']], 'newPlaysFound': [], 'playsMadeSoFar': [], 'bestScoreSoFar': 0}
         resultOfCheck = self.rummy.findPlaysInHand(listOfPlays)
-        print("Result:", resultOfCheck)
         self.assertEquals(resultOfCheck['newPlaysFound'], [['C03', 'C04', 'C05'], ['C04', 'D04', 'H04'], ['D04', 'H04', 'S04'], ['D08', 'H08', 'S08'], ['C04', 'D04', 'H04', 'S04'], [['D08'], ['D08', 'D09', 'D10', 'D11'], ['D09', 'D10', 'D11']]])
 
-
-
-# listOfPlays = {'playerHand': ['C01', 'C03', 'C04', 'C08', 'D03', 'D09', 'D11', 'D13', 'H08', 'H12', 'H13'], 'playsFound': [], 'newPlaysFound': [], 'playsMadeSoFar': [], 'bestScoreSoFar': 0}
 
 
 

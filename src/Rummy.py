@@ -238,7 +238,6 @@ class Rummy:
             self.game_output.display("You have played the following:")
             for plays in gameState["plays"][playerHand]:
                 self.playing_card.convert_numbers_to_faces(plays)
-                self.game_output.display(plays)
                 self.playing_card. convert_faces_to_numbers(plays)
         
 
@@ -247,7 +246,6 @@ class Rummy:
 
 
     def displayInitialPosition(self, gameState):
-        self.game_output.display("Under construction")
 
         self.displayStock(gameState)
 
@@ -271,7 +269,6 @@ class Rummy:
         gameState = self.dealTheHands(gameState)
         gameState = self.initiateTheStock(gameState)
         self.displayInitialPosition(gameState)
-        self.game_output.display(gameState)
         return(gameState)
 
 
@@ -426,10 +423,6 @@ class Rummy:
         runToReplace = []
         cardToMeld = []
 
-        self.game_output.display(runToCheck)
-        # runToCheck = self.playing_card.convert_face_to_number(runToCheck)
-
-
         cardToMatch = listOfPlays["playerHand"][startPosition]
         suitToMatch = cardToMatch[0]
         faceToMatch = cardToMatch[1:3]
@@ -542,10 +535,7 @@ class Rummy:
             listOfPlays["playerHand"] = self.removeCardsFromHand(listOfPlays["playerHand"], playToEvaluate)  
         else:
             # it's a meld
-            self.game_output.display(playToEvaluate)
             meldedCard = playToEvaluate[0]
-            self.game_output.display(meldedCard)
-            self.game_output.display(meldedCard[0])
             newPlay = playToEvaluate[1]
             originalPlay = playToEvaluate[2]
             listOfPlays["playerHand"].remove(meldedCard[0])
@@ -921,9 +911,9 @@ class Rummy:
 
 
 
-        self.game_output.display(gameState)
-        self.game_output.display()
-        self.game_output.display(gameState["deck"])
+        # self.game_output.display(gameState)
+        # self.game_output.display()
+        # self.game_output.display(gameState["deck"])
 
 
 
