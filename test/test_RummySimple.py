@@ -21,9 +21,9 @@ class TestRummy(unittest.TestCase):
             for value in ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]:
                 cls.deck.append(suit + value)
 
-    # def setUp(self):
-        # self.deck = []
-
+    def setUp(self):
+        self.test_output.reset_list_of_test_outputs()
+     
 
     # def test_rummy(self):
     #     self.test_input.set_list_of_test_inputs([3,"T","S"])
@@ -61,9 +61,39 @@ class TestRummy(unittest.TestCase):
     #     self.test_input.set_list_of_test_inputs(["S"])
     #     self.rummy.set_game_input(self.test_input)
 
-    def test_askYorN(self):
+
+    def test_askYorN_y(self):
+        self.rummy.set_game_output(self.test_output)
+        self.test_input.set_list_of_test_inputs(["y"])
+        self.rummy.set_game_input(self.test_input)
+        self.assertTrue(self.rummy.askYorN("Howdy"))
+        temp = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(temp, [])
+
+    def test_askYorN_Y(self):
+        self.rummy.set_game_output(self.test_output)
+        self.test_input.set_list_of_test_inputs(["Y"])
+        self.rummy.set_game_input(self.test_input)
+        self.assertTrue(self.rummy.askYorN("Howdy"))
+        temp = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(temp, [])
+
+
+
+
+    def test_askYorN_lpo_n(self):
         self.rummy.set_game_output(self.test_output)
         self.test_input.set_list_of_test_inputs(["lpo","n"])
+        self.rummy.set_game_input(self.test_input)
+        self.assertFalse(self.rummy.askYorN("Howdy"))
+        temp = self.test_output.get_list_of_test_outputs()
+        # print("reply:", temp)
+        self.assertEquals(temp[0], "Please enter 'y' or 'n'")
+
+
+    def test_askYorN__N(self):
+        self.rummy.set_game_output(self.test_output)
+        self.test_input.set_list_of_test_inputs(["","N"])
         self.rummy.set_game_input(self.test_input)
         self.assertFalse(self.rummy.askYorN("Howdy"))
         temp = self.test_output.get_list_of_test_outputs()
