@@ -3,6 +3,7 @@ sys.path.append('/home/derek/Documents/UoG/GA1/FPSE/AdapterSSversion')
 from src.Rummy import Rummy
 from src.PlayingCard import PlayingCard
 from src.TestInput import TestInput
+from src.TestOutput import TestOutput
 import unittest
 
 class TestRummy(unittest.TestCase):
@@ -10,13 +11,19 @@ class TestRummy(unittest.TestCase):
     rummy = Rummy()
     playing_card = PlayingCard()
     test_input = TestInput()
+    test_output = TestOutput()
 
-    # a full deck, unshuffled
-    def setUp(self):
-        self.deck = []
+    @classmethod
+    def setUpClass(cls):
+        cls.deck = []
+        # a full deck, unshuffled
         for suit in ['H', 'D', 'S', 'C']:
             for value in ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]:
-                self.deck.append(suit + value)
+                cls.deck.append(suit + value)
+
+    # def setUp(self):
+        # self.deck = []
+
 
     # def test_rummy(self):
     #     self.test_input.set_list_of_test_inputs([3,"T","S"])
@@ -44,7 +51,9 @@ class TestRummy(unittest.TestCase):
     def test_setupNewDeck_IsShuffled(self):
         newDeck = self.rummy.setupNewDeck()
         self.assertNotEqual(newDeck, self.deck)
+
         # Just in case...
+    def test_generate_deck(self):
         self.assertEqual(self.deck, self.playing_card.generate_deck())
 
 
@@ -53,9 +62,13 @@ class TestRummy(unittest.TestCase):
     #     self.rummy.set_game_input(self.test_input)
 
     def test_askYorN(self):
-        self.test_input.set_list_of_test_inputs(["y"])
+        self.rummy.set_game_output(self.test_output)
+        self.test_input.set_list_of_test_inputs(["lpo","n"])
         self.rummy.set_game_input(self.test_input)
-        self.assertTrue(self.rummy.askYorN("Howdy"))
+        self.assertFalse(self.rummy.askYorN("Howdy"))
+        temp = self.test_output.get_list_of_test_outputs()
+        # print("reply:", temp)
+        self.assertEquals(temp[0], "Please enter 'y' or 'n'")
 
 
 
