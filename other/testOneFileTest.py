@@ -11,7 +11,6 @@ class OneFileTest(unittest.TestCase):
     def setUp(self):
         src_path = "./src"
         self.files = [file for file in listdir(src_path) if isfile(join(src_path, file))]
-        # print("displaying self.files: ", self.files)
 
     def test_PlayerState(self):
         self.assertTrue("PlayerState.py" in self.files)

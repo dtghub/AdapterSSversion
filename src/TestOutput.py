@@ -14,6 +14,6 @@ class TestOutput(Output):
         return self.list_of_test_outputs
 
     def display(self, *message):
-        self.list_of_test_outputs.append(*message)
+        self.list_of_test_outputs.append([*message])
         
         

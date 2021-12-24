@@ -69,42 +69,64 @@ class TestRummy(unittest.TestCase):
     def test_askYorN_y(self):
         self.test_input.set_list_of_test_inputs(["y"])
         self.assertTrue(self.rummy.askYorN("Howdy"))
-        temp = self.test_output.get_list_of_test_outputs()
-        self.assertEquals(temp, [])
+        outputs = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(outputs, [])
 
     def test_askYorN_Y(self):
         self.test_input.set_list_of_test_inputs(["Y"])
         self.assertTrue(self.rummy.askYorN("Howdy"))
-        temp = self.test_output.get_list_of_test_outputs()
-        self.assertEquals(temp, [])
+        outputs = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(outputs, [])
 
 
     def test_askYorN_lpo_n(self):
         self.test_input.set_list_of_test_inputs(["lpo"," ","n"])
         self.assertFalse(self.rummy.askYorN("Howdy"))
-        temp = self.test_output.get_list_of_test_outputs()
-        # print("reply:", temp)
-        self.assertEquals(temp[0], "Please enter 'y' or 'n'")
-        self.assertEquals(temp[1], "Please enter 'y' or 'n'")
+        outputs = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(outputs[0], ["Please enter 'y' or 'n'"])
+        self.assertEquals(outputs[1], ["Please enter 'y' or 'n'"])
 
 
     def test_askYorN__N(self):
         self.test_input.set_list_of_test_inputs(["","N"])
         self.assertFalse(self.rummy.askYorN("Howdy"))
-        temp = self.test_output.get_list_of_test_outputs()
-        # print("reply:", temp)
-        self.assertEquals(temp[0], "Please enter 'y' or 'n'")
+        outputs = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(outputs[0], ["Please enter 'y' or 'n'"])
 
 
 
 
 
-    # def getNumberFromPlayer(self):
+
+    def test_getNumberFromPlayer_3(self):
+        self.test_input.set_list_of_test_inputs(["3"])
+        self.assertEquals(self.rummy.getNumberFromPlayer("Please enter yer munber, sah!", 2, 5, 2), 3)
+        outputs = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(outputs, [])
+
+    def test_getNumberFromPlayer_1_100_4(self):
+        self.test_input.set_list_of_test_inputs(["1", "100", "4"])
+        self.assertEquals(self.rummy.getNumberFromPlayer("Please enter yer munber, sah!", 2, 5, 2), 4)
+        outputs = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(outputs[0], ["Sorry, you need to enter a number, minimum; 2, maximum; 5"])
+        self.assertEquals(outputs[1], ["Sorry, you need to enter a number, minimum; 2, maximum; 5"])
+
+
+
+    def test_getNumberFromPlayer_1000_m1_5(self):
+        self.test_input.set_list_of_test_inputs(["1000", "-1", "5"])
+        self.assertEquals(self.rummy.getNumberFromPlayer("Please enter yer munber, sah!", 2, 5, 2), 5)
+        outputs = self.test_output.get_list_of_test_outputs()
+        self.assertEquals(outputs[0], ["Sorry, you need to enter a number, minimum; 2, maximum; 5"])
+        
+
+    # Sorry, you need to enter a number, minimum; 2, maximum; 5
 
 
 
 
 
+    def tst_
 
 
 
