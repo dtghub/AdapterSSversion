@@ -79,8 +79,8 @@ class Rummy:
         if (gameState["deck"] == []):
             lenOfStock = len(gameState["stock"])
             if (lenOfStock == 1):
-                print("Deck is empty. Only the stock card remains!")
-                print("Drawing stock card!")
+                self.game_output.display("Deck is empty. Only the stock card remains!")
+                self.game_output.display("Drawing stock card!")
                 topCard = self.playing_card.deal_a_card(gameState["stock"])
             else:
                 gameState["deck"] = gameState["stock"][0:lenOfStock - 2]
@@ -98,9 +98,9 @@ class Rummy:
             with open(rulesFilename, "r") as f:
                 emailTemplate = f.read()
         except OSError as err:
-            print("Hmmm: something went wrong:")
-            print("OS error: {0}".format(err))
-            print("Unable to open the game rules file...")
+            self.game_output.display("Hmmm: something went wrong:")
+            self.game_output.display("OS error: {0}".format(err))
+            self.game_output.display("Unable to open the game rules file...")
             emailTemplate = ""
         return emailTemplate
 
@@ -136,7 +136,7 @@ class Rummy:
                 if (isAboveMin and isBelowMax):
                     isNotValidInput = False
                 else:
-                    print("Sorry, you need to enter a number" + rangeInfo)
+                    self.game_output.display("Sorry, you need to enter a number" + rangeInfo)
 
         return(playerChoice)
 
@@ -146,14 +146,14 @@ class Rummy:
 
 
     def welcomeThePlayer(self, rulesFilename):
-        print("\nWelcome to Rummy!\n\n")
+        self.game_output.display("\nWelcome to Rummy!\n\n")
         if self.askYorN("Would you like to see the instructions? (y or n): "):
-            print(self.displayRules(rulesFilename))
+            self.game_output.display(self.displayRules(rulesFilename))
 
 
 
     def askPlayerForPrefs(self, gameState):
-        print("If you want, you can just press enter to accept the default answers (shown in brackets) to the following questions.")
+        self.game_output.display("If you want, you can just press enter to accept the default answers (shown in brackets) to the following questions.")
 
         playerChoice = self.getNumberFromPlayer("Please enter the target score to win (1000): ", 10, 100000, 1000)
         gameState["scoreToWin"] = playerChoice
@@ -175,7 +175,7 @@ class Rummy:
 
     def determinePlayingOrder(self, gameState):
         playerNum = random.randint(0, gameState["numberOfPlayers"] - 1)
-        print("You are player number " + str(playerNum + 1))
+        self.game_output.display("You are player number " + str(playerNum + 1))
         gameState["playerNumber"] = playerNum
         return(gameState)
 
@@ -212,7 +212,7 @@ class Rummy:
 
     def displayStock(self, gameState):
         topCard = gameState["stock"][len(gameState["stock"]) - 1]
-        print("The top card on the stock pile is:", topCard)
+        self.game_output.display("The top card on the stock pile is:", topCard)
 
 
 
@@ -224,21 +224,21 @@ class Rummy:
 
         
     def displayComputerPosition(self, computerHand, gameState):
-        print("Player", computerHand + 1, "has", len(gameState["hands"][computerHand]), "cards left in their hand.")
+        self.game_output.display("Player", computerHand + 1, "has", len(gameState["hands"][computerHand]), "cards left in their hand.")
         if (len(gameState["plays"][computerHand]) > 0):
-            print("They have played the following:", gameState["plays"][computerHand])
+            self.game_output.display("They have played the following:", gameState["plays"][computerHand])
 
 
 
     def displayPlayerPosition(self, gameState):
         playerHand = gameState["playerNumber"]
-        print("You are player", playerHand+1)
-        print("You have the following cards in your hand:", gameState["hands"][playerHand])
+        self.game_output.display("You are player", playerHand+1)
+        self.game_output.display("You have the following cards in your hand:", gameState["hands"][playerHand])
         if (len(gameState["plays"][playerHand]) > 0):
-            print("You have played the following:")
+            self.game_output.display("You have played the following:")
             for plays in gameState["plays"][playerHand]:
                 self.playing_card.convert_numbers_to_faces(plays)
-                print(plays)
+                self.game_output.display(plays)
                 self.playing_card. convert_faces_to_numbers(plays)
         
 
@@ -247,7 +247,7 @@ class Rummy:
 
 
     def displayInitialPosition(self, gameState):
-        print("Under construction")
+        self.game_output.display("Under construction")
 
         self.displayStock(gameState)
 
@@ -271,7 +271,7 @@ class Rummy:
         gameState = self.dealTheHands(gameState)
         gameState = self.initiateTheStock(gameState)
         self.displayInitialPosition(gameState)
-        print(gameState)
+        self.game_output.display(gameState)
         return(gameState)
 
 
@@ -426,7 +426,7 @@ class Rummy:
         runToReplace = []
         cardToMeld = []
 
-        print(runToCheck)
+        self.game_output.display(runToCheck)
         # runToCheck = self.playing_card.convert_face_to_number(runToCheck)
 
 
@@ -542,10 +542,10 @@ class Rummy:
             listOfPlays["playerHand"] = self.removeCardsFromHand(listOfPlays["playerHand"], playToEvaluate)  
         else:
             # it's a meld
-            print(playToEvaluate)
+            self.game_output.display(playToEvaluate)
             meldedCard = playToEvaluate[0]
-            print(meldedCard)
-            print(meldedCard[0])
+            self.game_output.display(meldedCard)
+            self.game_output.display(meldedCard[0])
             newPlay = playToEvaluate[1]
             originalPlay = playToEvaluate[2]
             listOfPlays["playerHand"].remove(meldedCard[0])
@@ -603,13 +603,13 @@ class Rummy:
         if (withTopCard["bestScoreSoFar"] > justHand["bestScoreSoFar"]):
             listOfPlays = withTopCard
             topCard = self.playing_card. convert_number_to_face(topCard)
-            print("Player draws the", topCard, "from the stock pile.")
+            self.game_output.display("Player draws the", topCard, "from the stock pile.")
             gameState["stock"].pop()
         else:
             # the stock card didn't help, so take the chance with the stock card
             cardFromDeck = self.getCardFromDeck(gameState)
             cardFromDeck = self.playing_card. convert_face_to_number(cardFromDeck)
-            print("Player takes a card from the deck.")
+            self.game_output.display("Player takes a card from the deck.")
             listOfPlays["playerHand"].append(cardFromDeck)
             listOfPlays["playerHand"].sort()
             listOfPlays = self.findBestScoreForHand(listOfPlays)
@@ -625,7 +625,7 @@ class Rummy:
             cardToDiscard = listOfPlays["playerHand"][positionOfCardToDiscard]
             listOfPlays["playerHand"].pop(positionOfCardToDiscard)
 
-            print("Player discards", cardToDiscard)
+            self.game_output.display("Player discards", cardToDiscard)
             gameState["stock"].append(cardToDiscard)
         return(gameState, listOfPlays)
 
@@ -637,7 +637,7 @@ class Rummy:
                 # run or set
                 facesList = copy.deepcopy(playMade)
                 self.playing_card.convert_numbers_to_faces(facesList)
-                print("Player played:", facesList)
+                self.game_output.display("Player played:", facesList)
             else:
                 # it's a meld
                 meldedCard = playMade[0]
@@ -647,7 +647,7 @@ class Rummy:
                 originalPlay = playMade[2]
                 self.playing_card.convert_numbers_to_faces(originalPlay)
                 
-                print(
+                self.game_output.display(
                     "Player melded the", meldedCard,
                     "card to", originalPlay,
                     "to make the new play:", newPlay
@@ -665,7 +665,7 @@ class Rummy:
 
     def playComputerTurn(self, gameState, currentPlayer):
         # currentPlayer = 0 #dummy value for just now
-        print("\n\nPlayer number", currentPlayer + 1, "plays.")
+        self.game_output.display("\n\nPlayer number", currentPlayer + 1, "plays.")
 
         listOfPlays = self.setupListOfPlays(gameState, currentPlayer)
         self.playing_card. convert_faces_to_numbers(listOfPlays["playerHand"])
@@ -697,7 +697,7 @@ class Rummy:
             cardDrawn = self.playing_card. convert_face_to_number(cardDrawn)
         else:
             cardDrawn = self.getCardFromDeck(gameState)
-            print("You have drawn", cardDrawn, "from the deck.")
+            self.game_output.display("You have drawn", cardDrawn, "from the deck.")
             cardDrawn = self.playing_card. convert_face_to_number(cardDrawn)
             
         self.playing_card. convert_faces_to_numbers(listOfPlays["playerHand"])
@@ -720,13 +720,13 @@ class Rummy:
 
     def listPlaysAndGetPlayerChoice(self, listOfPlays):
         isKeepGoing = True
-        print("Please choose from the following options:")
+        self.game_output.display("Please choose from the following options:")
         playerChoices = listOfPlays["newPlaysFound"]
         for i, playerOption in enumerate(playerChoices):
 
             if (len(playerOption[1][0]) == 1):
                 self.playing_card.convert_numbers_to_faces(playerOption)
-                print(i,")", playerOption)
+                self.game_output.display(i,")", playerOption)
                 self.playing_card. convert_faces_to_numbers(playerOption)
             else:
                 meldedCard = playerOption[0]
@@ -736,14 +736,14 @@ class Rummy:
                 originalPlay = playerOption[2]
                 self.playing_card.convert_numbers_to_faces(originalPlay)
                 
-                print(
+                self.game_output.display(
                     i, ")",
                     "Meld the", meldedCard,
                     "card to", originalPlay,
                     "to make the new play:", newPlay
                 )
 
-        print(len(playerChoices), ") No play")
+        self.game_output.display(len(playerChoices), ") No play")
 
         playNumberChosenByPlayer = self.getNumberFromPlayer("\nPlease select:", 0, len(playerChoices))
         if (playNumberChosenByPlayer < len(playerChoices)):
@@ -775,12 +775,12 @@ class Rummy:
             listOfPlays["playerHand"].sort()
             listOfPlays = self.findPlaysInHand(listOfPlays)
             self.playing_card.convert_numbers_to_faces(listOfPlays["playerHand"])
-            print("Looking for a play option...")
+            self.game_output.display("Looking for a play option...")
 
             if (listOfPlays["newPlaysFound"] != []):
                 listOfPlays, isKeepGoing = self.listPlaysAndGetPlayerChoice(listOfPlays)
             else:
-                print("You have no valid plays available")
+                self.game_output.display("You have no valid plays available")
                 isKeepGoing = False
         return(listOfPlays)
 
@@ -790,16 +790,16 @@ class Rummy:
     def getPlayersChoiceOfCardToReturnToStock(self, gameState, listOfPlays):
         numberOfCardsLeft = len(listOfPlays["playerHand"])
         if (numberOfCardsLeft == 0):
-            print("You have played all of your cards")
+            self.game_output.display("You have played all of your cards")
         elif (numberOfCardsLeft == 1):
-            print("You must return your remaining card", listOfPlays["playerHand"], "to the stock pile")
+            self.game_output.display("You must return your remaining card", listOfPlays["playerHand"], "to the stock pile")
             gameState["stock"].append(listOfPlays["playerHand"])
             listOfPlays["playerHand"] = ""
         else:
-            print("Please choose a card from your hand to return to stock:")
+            self.game_output.display("Please choose a card from your hand to return to stock:")
             playerChoices = listOfPlays["playerHand"]
             for i, playerOption in enumerate(playerChoices):
-                print(i,")", playerOption)
+                self.game_output.display(i,")", playerOption)
             cardNumberChosenByPlayer = self.getNumberFromPlayer("\nPlease select:", 0, len(playerChoices))
             gameState["stock"].append(listOfPlays["playerHand"][cardNumberChosenByPlayer])
             listOfPlays["playerHand"].pop(cardNumberChosenByPlayer)
@@ -921,9 +921,9 @@ class Rummy:
 
 
 
-        print(gameState)
-        print()
-        print(gameState["deck"])
+        self.game_output.display(gameState)
+        self.game_output.display()
+        self.game_output.display(gameState["deck"])
 
 
 
